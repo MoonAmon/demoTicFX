@@ -1,21 +1,21 @@
 package application;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
 
-    private static final int SIZE =3;
-    private Button[][] buttons = new Button[SIZE][SIZE];
-    private boolean xTurn = true;
+    private static final int SIZE = 3;
+    private static Button[][] buttons = new Button[SIZE][SIZE];
+    private static boolean xTurn = true;
 
     public static void main(String[] args) {
         launch(args);
@@ -70,14 +70,24 @@ public class Main extends Application {
     }
 
     private void openWinnerWindows(String player) {
-        Stage stage = new Stage();
-        stage.setTitle(player + " won the match");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/application/win-windows.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
 
-        VBox vbox = new VBox(new Label(player + " won the match"));
-        Scene scene = new Scene(vbox, 200, 100);
+            WindowsWinController controller = fxmlLoader.getController();
+            controller.initialize(player);
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setTitle("Winner");
+            stage.setScene(scene);
+            stage.setWidth(340);
+            stage.setHeight(160);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isWinningCombination(String player) {
@@ -110,5 +120,25 @@ public class Main extends Application {
         }
 
         return false;
+    }
+
+    public static Button[][] getButtons() {
+        return buttons;
+    }
+
+    public static void setButtons(Button[][] buttons) {
+        Main.buttons = buttons;
+    }
+
+    public static boolean isxTurn() {
+        return xTurn;
+    }
+
+    public static void setxTurn(boolean xTurn) {
+        Main.xTurn = xTurn;
+    }
+
+    public static int getSize() {
+        return SIZE;
     }
 }
